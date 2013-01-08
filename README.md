@@ -1,4 +1,4 @@
-# Fluent::Plugin::Psql
+# fluent-plugin-psql
 
 TODO: Write a gem description
 
