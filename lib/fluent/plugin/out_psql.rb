@@ -35,7 +35,6 @@ class Fluent::PsqlOutput < Fluent::BufferedOutput
 
   def write(chunk)
     conn = get_connection
-    p @sql
     conn.prepare("insert",@sql)
 
     chunk.msgpack_each { |tag,time,record|
