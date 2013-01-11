@@ -31,15 +31,15 @@ class PsqlOutputTest < Test::Unit::TestCase
       user tester
       password tester
 
-      key_names method,code
-      sql INSERT INTO simple_apache_access (method,code,data) VALUES ($1,$2,$3)
+      key_names method,code,param,time
+      sql INSERT INTO simple_apache_access (method,code,data,datetime) VALUES ($1,$2,$3,$4)
 
-      hstore_key_name params
+      hstore_key_name param
 
       flush_interval 5s
     ]
     time = Time.parse('2012-12-17 09:23:45 JST').to_i # JST(+0900)
-    record = {"method"=>"GET", "code"=>"200", "params" => "param1=hoge&param2=fuga"}
+    record = {"method"=>"GET", "code"=>"200", "param" => "param1=hoge&param2=fuga"}
     d.emit(record, time)
     d.run
   end
