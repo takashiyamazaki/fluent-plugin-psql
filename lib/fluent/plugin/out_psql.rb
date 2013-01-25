@@ -35,9 +35,9 @@ class Fluent::PsqlOutput < Fluent::TimeSlicedOutput
 
   def write(chunk)
     conn = get_connection
-    #sql_adding_date = get_adding_date_sql chunk.key
-    #conn.prepare("insert", sql_adding_date)
-    conn.prepare("insert", @sql)
+    sql_adding_date = get_adding_date_sql chunk.key
+    conn.prepare("insert", sql_adding_date)
+    #conn.prepare("insert", @sql)
 
     chunk.msgpack_each { |tag,time,record|
       begin
