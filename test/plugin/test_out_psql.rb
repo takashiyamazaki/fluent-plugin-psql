@@ -12,10 +12,12 @@ class PsqlOutputTest < Test::Unit::TestCase
 
     key_names fuga_key
     sql fuga_sql
+
+    buffer_type memory
   }
 
   def create_driver(conf = CONFIG, tag = 'test')
-    Fluent::Test::BufferedOutputTestDriver.new(Fluent::PsqlOutput, tag).configure(conf)
+    Fluent::Test::TimeSlicedOutputTestDriver.new(Fluent::PsqlOutput, tag).configure(conf)
   end
 
   def test_configure
@@ -31,11 +33,14 @@ class PsqlOutputTest < Test::Unit::TestCase
       user tester
       password tester
 
+      time_slice_format %Y%m%d
       key_names method,code,param,time
+      #sql INSERT INTO simple_apache_access_%Y%m%d (method,code,data,datetime) VALUES ($1,$2,$3,$4)
       sql INSERT INTO simple_apache_access (method,code,data,datetime) VALUES ($1,$2,$3,$4)
 
       hstore_key_name param
 
+      buffer_type memory
       flush_interval 5s
     ]
     time = Time.parse('2012-12-17 09:23:45 JST').to_i # JST(+0900)

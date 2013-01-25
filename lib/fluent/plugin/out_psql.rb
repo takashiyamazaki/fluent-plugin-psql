@@ -1,4 +1,4 @@
-class Fluent::PsqlOutput < Fluent::BufferedOutput
+class Fluent::PsqlOutput < Fluent::TimeSlicedOutput
   Fluent::Plugin.register_output('psql', self)
 
   config_param :database, :string
@@ -8,7 +8,6 @@ class Fluent::PsqlOutput < Fluent::BufferedOutput
   config_param :password, :string
 
   config_param :key_names, :string
-  config_param :sql_time_index, :integer, :default => nil
   config_param :sql, :string
 
   config_param :hstore_key_name, :string, :default => nil
@@ -36,7 +35,9 @@ class Fluent::PsqlOutput < Fluent::BufferedOutput
 
   def write(chunk)
     conn = get_connection
-    conn.prepare("insert",@sql)
+    #sql_adding_date = get_adding_date_sql chunk.key
+    #conn.prepare("insert", sql_adding_date)
+    conn.prepare("insert", @sql)
 
     chunk.msgpack_each { |tag,time,record|
       begin
@@ -92,6 +93,11 @@ class Fluent::PsqlOutput < Fluent::BufferedOutput
     end
 
     return hstore_ary.join(",")
+  end
+
+  # SQLのtime_slice_format形式の部分をchunkからとれる日付に置き換える.
+  def get_adding_date_sql chunk_date
+    @sql.sub(@time_slice_format, chunk_date)
   end
 
 end
